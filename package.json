@@ -1,0 +1,17 @@
+{
+  "name": "merkle",
+  "version": "1.0.0",
+  "description": "merkle tree distribution contract",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Gingras",
+  "license": "ISC",
+  "devDependencies": {
+    "hardhat": "^2.1.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.4.1"
+  }
+}
