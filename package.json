@@ -9,9 +9,14 @@
   "author": "Michael Gingras",
   "license": "ISC",
   "devDependencies": {
-    "hardhat": "^2.1.1"
+    "hardhat": "^2.1.1",
+    "ts-node": "^9.1.1"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^3.4.1"
+    "@openzeppelin/contracts": "^3.4.1",
+    "commander": "^7.2.0",
+    "ethereumjs-util": "^7.0.10",
+    "fs": "0.0.1-security",
+    "typescript": "^4.2.4"
   }
 }

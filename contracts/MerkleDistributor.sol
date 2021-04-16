@@ -1,8 +1,9 @@
 // SPDX-License-Indentifier: UNLICENSED
-pragma solidity=0.7.0;
+pragma solidity ^0.7.0;
+import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
-import "./interfaces/IMerkleDistributor.sol";
+import "./IMerkleDistributor.sol";
 
 contract MerkleDistributor is IMerkleDistributor {
     bytes32 public immutable override merkleRoot;
@@ -27,16 +28,18 @@ contract MerkleDistributor is IMerkleDistributor {
         claimedBitMap[claimedWordIndex] = claimedBitMap[claimedWordIndex] | (1 << claimedBitIndex);
     }
 
-    function claim(uint256 index, address account, uint256 amount, bytes32[] calldata merkleProof) external override {
+    function claim(uint256 index, address account, bytes32 amount, bytes32[] calldata merkleProof) external override {
         require(!isClaimed(index), 'MerkleDistributor: Drop already claimed.');
 
         // Verify the merkle proof.
-        bytes32 node = keccak256(abi.encodePacked(index, account, amount));
-        require(MerkleProof.verify(merkleProof, merkleRoot, node), 'MerkleDistributor: Invalid proof.');
+        // bytes32 node = keccak256(abi.encodePacked(index, account, amount));
+        console.logBytes32(amount);
+        require(MerkleProof.verify(merkleProof, merkleRoot, amount), 'MerkleDistributor: Invalid proof.');
 
         // Mark it claimed and send the token.
         _setClaimed(index);
-        require(IERC20(token).transfer(account, amount), 'MerkleDistributor: Transfer failed.');
+        // mint token
+        // require(IERC20(token).transfer(account, amount), 'MerkleDistributor: Transfer failed.');
 
         emit Claimed(index, account, amount);
     }

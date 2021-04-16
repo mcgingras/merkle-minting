@@ -1,0 +1,145 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/mcgingras/Projects/merkle/contracts/IMerkleDistributor.sol": {
+      "lastModificationDate": 1618369524729,
+      "contentHash": "f5d8be87364270950f32a4b4a01aa922",
+      "sourceName": "contracts/IMerkleDistributor.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.0"
+      ],
+      "artifacts": [
+        "IMerkleDistributor"
+      ]
+    },
+    "/Users/mcgingras/Projects/merkle/contracts/MerkleDistributor.sol": {
+      "lastModificationDate": 1618369781387,
+      "contentHash": "5187c61bd95c76f969bd83ea702e8454",
+      "sourceName": "contracts/MerkleDistributor.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "@openzeppelin/contracts/cryptography/MerkleProof.sol",
+        "./IMerkleDistributor.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "MerkleDistributor"
+      ]
+    },
+    "/Users/mcgingras/Projects/merkle/node_modules/@openzeppelin/contracts/cryptography/MerkleProof.sol": {
+      "lastModificationDate": 1615064863673,
+      "contentHash": "44bd823687d58263d3b1da555235f93e",
+      "sourceName": "@openzeppelin/contracts/cryptography/MerkleProof.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.0 <0.8.0"
+      ],
+      "artifacts": [
+        "MerkleProof"
+      ]
+    },
+    "/Users/mcgingras/Projects/merkle/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1615058294361,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
+    }
+  }
+}
