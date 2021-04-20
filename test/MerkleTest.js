@@ -1,80 +1,58 @@
 const { expect } = require("chai")
+const { BalanceTree } = require('../src/balance-tree.js')
+const { BigNumber } = require('ethers')
 
-// input: "austin", "michael", "meg", "jenna"
-// -------------------------------------------------------------------------------
-// tree - visualized
-// - 0x658ec29ecc2f785a416a12b6ae9244f3d02bcadc1037c937f2274429b9b144ca
-// ----- 0xb3011dd8886ddc1cbc786f2fbfa3d0d75b26d8d191ebd7a9ba3d3a9a6944180a
-// ---------- '0x357e8ea1fefb357db68588579634b75f57d66ec252b111dc4cfdb8c0a6f3e680'
-// ---------- '0x93a1ddf66f95712b2a36e465c39fac5e1d9b86701c55ae2460b00f5e6d1f8d82'
-// ----- 0x0ed431f1a91143d8b1ae0fe5a2f9b5c1ecbbd15f17101c23f13ac3c1c718450d
-// ---------- '0xdcd7983d09dd8904153ff95e5cc07ecbdeb6ca3439a8c5f9089d97fde10d1cc7'
-// ---------- '0x4b7c0f6b94a23cba376d88d23832b0fa5df063e1563edd94a2141e16786afa15'
 
-const tree = {
-  root: "0x658ec29ecc2f785a416a12b6ae9244f3d02bcadc1037c937f2274429b9b144ca",
-  claims: {
-    "0x357e8ea1fefb357db68588579634b75f57d66ec252b111dc4cfdb8c0a6f3e680": {
-      "proof": [
-        "0x93a1ddf66f95712b2a36e465c39fac5e1d9b86701c55ae2460b00f5e6d1f8d82",
-        "0x0ed431f1a91143d8b1ae0fe5a2f9b5c1ecbbd15f17101c23f13ac3c1c718450d"
-      ]
-    },
-    "0x93a1ddf66f95712b2a36e465c39fac5e1d9b86701c55ae2460b00f5e6d1f8d82": {
-      "proof": [
-        "0x357e8ea1fefb357db68588579634b75f57d66ec252b111dc4cfdb8c0a6f3e680",
-        "0x0ed431f1a91143d8b1ae0fe5a2f9b5c1ecbbd15f17101c23f13ac3c1c718450d"
-      ]
-    },
-    "0xdcd7983d09dd8904153ff95e5cc07ecbdeb6ca3439a8c5f9089d97fde10d1cc7": {
-      "proof": [
-        "0x4b7c0f6b94a23cba376d88d23832b0fa5df063e1563edd94a2141e16786afa15",
-        "0xb3011dd8886ddc1cbc786f2fbfa3d0d75b26d8d191ebd7a9ba3d3a9a6944180a"
-      ]
-    },
-    "0x4b7c0f6b94a23cba376d88d23832b0fa5df063e1563edd94a2141e16786afa15": {
-      "proof": [
-        "0xdcd7983d09dd8904153ff95e5cc07ecbdeb6ca3439a8c5f9089d97fde10d1cc7",
-        "0xb3011dd8886ddc1cbc786f2fbfa3d0d75b26d8d191ebd7a9ba3d3a9a6944180a"
-      ]
-    }
-  }
-}
+const ZERO_BYTES32 = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
-describe("Merkle Minting Tests", () => {
+describe("Merkle", () => {
 
-  let Merkle;
-  let merkleContract;
-  let owner;
-  let addr1;
-  let addr2;
-  let addrs;
-  let contractAddr;
+    let Merkle;
+    let owner;
+    let addr1;
+    let addr2;
+    let addrs;
+    let tree;
 
-  beforeEach(async () => {
-    Merkle = await ethers.getContractFactory("MerkleDistributor");
-    [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+    beforeEach(async () => {
+        Merkle = await ethers.getContractFactory("MerkleDistributor");
+        [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+    });
 
-    merkleContract = await Merkle.deploy("0x658ec29ecc2f785a416a12b6ae9244f3d02bcadc1037c937f2274429b9b144ca");
-    await merkleContract.deployed();
+    // No proof passed in to claim function
+    // No root hash even passed in
+    describe("Sanity check...", () => {
+        it("should fail on empty merkle proof.", async () => {
+            merkleContract = await Merkle.deploy(ZERO_BYTES32);
+            await merkleContract.deployed();
 
-    contractAddr = merkleContract.address;
-  });
+            await expect(merkleContract.claim(0, addr1.address, 10, []))
+            .to.be.revertedWith('MerkleDistributor: Invalid proof.');
+        });
+    });
 
-  describe("Sanity Check...", () => {
-    it("merkle root is set correctly", async () => {
-      expect(await merkleContract.merkleRoot === "0x658ec29ecc2f785a416a12b6ae9244f3d02bcadc1037c937f2274429b9b144ca");
+    describe("Two account tree", () => {
+
+      beforeEach('deploy', async () => {
+        tree = new BalanceTree([
+          { account: addr1.address, amount: BigNumber.from(100) },
+          { account: addr2.address, amount: BigNumber.from(101) },
+        ])
+
+        merkleContract = await Merkle.deploy(tree.getHexRoot())
+        await merkleContract.deployed();
+      })
+
+      it("should claim", async () => {
+        const proof0 = tree.getProof(0, addr1.address, BigNumber.from(100))
+        await expect(merkleContract.claim(0, addr1.address, BigNumber.from(100), proof0)).to.emit(merkleContract, 'Claimed')
+      })
+
+      it("should set claimed", async () => {
+        const proof0 = tree.getProof(0, addr1.address, BigNumber.from(100))
+        expect(await merkleContract.isClaimed(0)).to.eq(false)
+        await merkleContract.claim(0, addr1.address, BigNumber.from(100), proof0)
+        expect(await merkleContract.isClaimed(0)).to.eq(true)
+      })
     })
-  })
-
-  describe("Claiming an unclaimed drop...", () => {
-    it("claims correctly", async () => {
-      const tx = await merkleContract.claim(0, addr1.address, "0x357e8ea1fefb357db68588579634b75f57d66ec252b111dc4cfdb8c0a6f3e680", [
-        "0x93a1ddf66f95712b2a36e465c39fac5e1d9b86701c55ae2460b00f5e6d1f8d82",
-        "0x0ed431f1a91143d8b1ae0fe5a2f9b5c1ecbbd15f17101c23f13ac3c1c718450d"
-      ])
-
-      console.log(tx);
-    })
-  })
-})
+});

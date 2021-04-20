@@ -20,9 +20,9 @@
         },
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "amount",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
       "name": "Claimed",
@@ -41,9 +41,9 @@
           "type": "address"
         },
         {
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "amount",
-          "type": "bytes32"
+          "type": "uint256"
         },
         {
           "internalType": "bytes32[]",
