@@ -1,6 +1,6 @@
 // import MerkleTree from './merkle-tree'
 const { MerkleTree } = require('./merkle-tree.js')
-const { utils } = require('ethers')
+const { utils, BigNumber } = require('ethers')
 
 class TapeTree {
   constructor(balances) {
